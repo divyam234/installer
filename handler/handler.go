@@ -105,10 +105,9 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	// set query from route
 	path := strings.TrimPrefix(r.URL.Path, "/")
-	// move to path with !
-	if strings.HasSuffix(path, "#") {
-		q.MoveToPath = true
-		path = strings.TrimRight(path, "#")
+	
+	if r.URL.Query().Get("move") == "1" {
+		q.MoveToPath = true 
 	}
 	var rest string
 	q.User, rest = splitHalf(path, "/")
