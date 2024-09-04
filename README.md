@@ -21,6 +21,7 @@ curl https://sh-install.vercel.app/<user>/<repo>@<release> | bash
 * `repo` Github repository belonging to `user` (**required**)
 * `release` Github release name (defaults to the **latest** release)
 * `move=1` When provided as query param, downloads binary directly into `/usr/local/bin/` (defaults to working directory)
+* If no matching release is found you can  use `include="search term"` query param to filter release by search term.
 
 ## Examples
 
