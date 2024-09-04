@@ -11,7 +11,7 @@ Installer is an HTTP server which returns shell scripts. The returned script wil
 
 ```sh
 # install <user>/<repo> from github
-curl https://sh-install.vercel.app/<user>/<repo>@<release>! | bash
+curl https://sh-install.vercel.app/<user>/<repo>@<release> | bash
 ```
 
 *Or you can use* `wget -qO- <url> | bash`
@@ -20,15 +20,7 @@ curl https://sh-install.vercel.app/<user>/<repo>@<release>! | bash
 
 * `repo` Github repository belonging to `user` (**required**)
 * `release` Github release name (defaults to the **latest** release)
-* `!` When provided, downloads binary directly into `/usr/local/bin/` (defaults to working directory)
-
-**Query Params**
-
-* `?type=` Force the return type to be one of: `script` or `homebrew`
-    * `type` is normally detected via `User-Agent` header
-    * `type=homebrew` is **not** working at the moment – see [Homebrew](#homebrew)
-* `?insecure=1` Force `curl`/`wget` to skip certificate checks
-* `?as=` Force the binary to be named as this parameter value
+* `move=1` When provided as query param, downloads binary directly into `/usr/local/bin/` (defaults to working directory)
 
 ## Examples
 
@@ -37,7 +29,7 @@ curl https://sh-install.vercel.app/<user>/<repo>@<release>! | bash
 * https://sh-install.vercel.app/rclone/rclone
 
     ```sh
-    $ curl -s sh-install.vercel.app/mholt/caddy! | bash
+    $ curl -s sh-install.vercel.app/mholt/caddy?move=1 | bash
     Downloading mholt/caddy v0.8.2 (https://github.com/mholt/caddy/releases/download/v0.8.2/caddy_darwin_amd64.zip)
     ######################################################################## 100.0%
     Downloaded to /usr/local/bin/caddy
@@ -48,15 +40,3 @@ curl https://sh-install.vercel.app/<user>/<repo>@<release>! | bash
 ## Private repos
 
 You'll have to set `GITHUB_TOKEN` on both your server (instance of `installer`) and client (before you run `curl https://sh-install.vercel.app/foobar?private=1 | bash`)
-
-## Force a particular `user/repo`
-
-In some cases, people want an installer server for a single tool
-
-```sh
-export FORCE_USER=zyedidia
-export FORCE_REPO=micro
-./installer
-```
-
-Then calls to `curl localhost:8080` will return the install script for `zyedidia/micro`
