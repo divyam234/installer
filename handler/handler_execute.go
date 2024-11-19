@@ -58,21 +58,21 @@ func (h *Handler) getAssetsNoCache(q Query) (string, Assets, error) {
 	if release == "" || release == "latest" {
 		url += "/latest"
 		ghr := ghRelease{}
-		if err := h.get(url, q.Private, &ghr); err != nil {
+		if err := h.get(url, q.Token, &ghr); err != nil {
 			return release, nil, err
 		}
 		release = ghr.TagName //discovered
 		ghas = ghr.Assets
 	} else {
 		ghrs := []ghRelease{}
-		if err := h.get(url, q.Private, &ghrs); err != nil {
+		if err := h.get(url, q.Token, &ghrs); err != nil {
 			return release, nil, err
 		}
 		found := false
 		for _, ghr := range ghrs {
 			if ghr.TagName == release {
 				found = true
-				if err := h.get(ghr.AssetsURL, q.Private, &ghas); err != nil {
+				if err := h.get(ghr.AssetsURL, q.Token, &ghas); err != nil {
 					return release, nil, err
 				}
 				ghas = ghr.Assets

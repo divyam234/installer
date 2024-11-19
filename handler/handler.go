@@ -30,8 +30,8 @@ var (
 )
 
 type Query struct {
-	User, Program, AsProgram, Release, Include, Arch string
-	MoveToPath, Insecure, Private                    bool
+	User, Program, AsProgram, Release, Include, Arch, Token string
+	MoveToPath, Insecure, Private                           bool
 }
 
 type Result struct {
@@ -93,6 +93,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		showError("Unknown type", http.StatusInternalServerError)
 		return
 	}
+
 	q := Query{
 		User:      "",
 		Program:   "",
@@ -103,11 +104,20 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Private:   r.URL.Query().Get("private") == "1",
 		Arch:      r.URL.Query().Get("arch"),
 	}
+
+	token := r.URL.Query().Get("token")
+	if token != "" {
+		q.Token = token
+	}
+	if q.Private && token == "" {
+		showError("Set Token For Private Repo", http.StatusBadRequest)
+		return
+	}
 	// set query from route
 	path := strings.TrimPrefix(r.URL.Path, "/")
-	
+
 	if r.URL.Query().Get("move") == "1" {
-		q.MoveToPath = true 
+		q.MoveToPath = true
 	}
 	var rest string
 	q.User, rest = splitHalf(path, "/")
@@ -193,11 +203,11 @@ func (as Assets) HasM1() bool {
 	return false
 }
 
-func (h *Handler) get(url string, private bool, v interface{}) error {
+func (h *Handler) get(url string, token string, v interface{}) error {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
-	if private && h.Config.Token != "" {
-		req.Header.Set("Authorization", "token "+h.Config.Token)
+	if token != "" {
+		req.Header.Set("Authorization", "token "+token)
 	}
 	client := &http.Client{}
 	resp, err := client.Do(req)
