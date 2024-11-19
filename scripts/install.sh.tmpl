@@ -40,7 +40,7 @@ function install {
 	MOVE="{{ .MoveToPath }}"
 	RELEASE="{{ .Release }}"
 	PRIVATE="{{ .Private }}"
-	TOKEN="{{ .TOKEN }}"
+	TOKEN="{{ .Token }}"
 	INSECURE="{{ .Insecure }}"
 	OUT_DIR="{{ if .MoveToPath }}/usr/local/bin{{ else }}$(pwd){{ end }}"
 	GH="https://github.com"
